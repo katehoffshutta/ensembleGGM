@@ -1,22 +1,30 @@
-\name{MakeSpiderLearner}
-\alias{MakeSpiderLearner}
-\title{Instantiate SpiderLearner Object}
+\name{PlotSpiderLearner}
+\alias{PlotSpiderLearner}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Plot SpiderLearner Results
+}
 \description{
-This function instantiates a SpiderLearner object and populates it with a library of input Candidate objects. The result can then be used to fit ensemble GGMs on input data.
+This function generates a simple igraph plot of the ensemble GGM, using the results from the runSpiderLearner() member function of the SpiderLearner object.
 }
 \usage{
-MakeSpiderLearner(inputCandidates)
+PlotSpiderLearner(slResult)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{inputCandidates}{A list of Candidate objects.
+  \item{slResult}{
+A list returned by the runSpiderLearner() member function of the SpiderLearner object.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-A SpiderLearner object.
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -34,18 +42,11 @@ A SpiderLearner object.
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-# Fit an ensemble GGM to the judge rating in the USJudgeRatings dataset
-
 data(USJudgeRatings)
 mySL = MakeSpiderLearner()
 judgeMod = mySL$runSpiderLearner(data = USJudgeRatings,K=2,boundedLoss = T,standardize = T,nCores = 1)
 
-# corrplot of precision matrix
-corrplot(judgeMod$optTheta, is.corr=F, main = "Judge Ratings Precision Matrix")
-
-# corrplot of adjacency matrix of GGM
-corrplot(-cov2cor(judgeMod$optTheta) + diag(12), main = "Judge Ratings GGM Adjacency Matrix")
-
+PlotSpiderLearner(judgeMod)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

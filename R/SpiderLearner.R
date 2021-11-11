@@ -1,5 +1,7 @@
 # Implementation file for SpiderLearner class
+library(corrplot)
 library(doParallel)
+library(igraph)
 library(foreach)
 library(Rsolnp)
 library(R6)
@@ -167,7 +169,6 @@ SpiderLearner = R6Class(
       return(list(bootArray, bootWeights))
 
     },
-
     runSpiderLearner = function(data,K=5,standardize=T,nCores=1,boundedLoss=F)
     {
       private$.K = K
@@ -231,7 +232,6 @@ SpiderLearner = R6Class(
                   "foldsNets"=foldsNets,
                   "fullModels"=fullModels))
     }
-
     # gets and sets
 
   ) # end public
