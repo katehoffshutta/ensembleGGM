@@ -6,7 +6,7 @@ library(foreach)
 library(Rsolnp)
 library(R6)
 
-Candidate = R6Class(
+Candidate = R6::R6Class(
   private = list(
     .identifier = ""
   ), # end private
@@ -34,7 +34,7 @@ Candidate = R6Class(
   ) # end public
 )
 
-SpiderLearner = R6Class(
+SpiderLearner = R6::R6Class(
   private = list(
     .library = list(), # list of Candidates
     .K = 5,

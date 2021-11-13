@@ -3,7 +3,7 @@ library(hglasso)
 library(huge)
 library(qgraph)
 
-HugeEBICCandidate = R6Class(
+HugeEBICCandidate = R6::R6Class(
 
   inherit = Candidate,
 
@@ -22,8 +22,8 @@ HugeEBICCandidate = R6Class(
 
     fit = function(trainData,criterion)
     {
-      mod = huge(trainData,method = "glasso")
-      modOpt = huge.select(mod,
+      mod = huge::huge(trainData,method = "glasso")
+      modOpt = huge::huge.select(mod,
                            criterion = "ebic",
                            ebic.gamma = private$.gamma)
       return(modOpt$opt.icov)
@@ -31,7 +31,7 @@ HugeEBICCandidate = R6Class(
   ) # end public
 )
 
-HugeRICCandidate = R6Class(
+HugeRICCandidate = R6::R6Class(
 
   inherit = Candidate,
 
@@ -45,15 +45,15 @@ HugeRICCandidate = R6Class(
 
     fit = function(trainData,criterion)
     {
-      mod = huge(trainData,method = "glasso")
-      modOpt = huge.select(mod,
+      mod = huge::huge(trainData,method = "glasso")
+      modOpt = huge::huge.select(mod,
                            criterion = "ric")
       return(modOpt$opt.icov)
     }
   ) # end public
 )
 
-HugeStARSCandidate = R6Class(
+HugeStARSCandidate = R6::R6Class(
 
   inherit = Candidate,
 
@@ -82,8 +82,8 @@ HugeStARSCandidate = R6Class(
       if(is.null(private$.subsampleRatio))
         private$.subsampleRatio = private$.defaultSubsampleRatio(nrow(trainData))
 
-      mod = huge(trainData,method = "glasso")
-      modOpt = huge.select(mod,
+      mod = huge::huge(trainData,method = "glasso")
+      modOpt = huge::huge.select(mod,
                            criterion = "stars",
                            stars.thres = private$.thres,
                            stars.subsample.ratio = private$.subsampleRatio)
@@ -93,7 +93,7 @@ HugeStARSCandidate = R6Class(
 )
 
 
-HGlassoCandidate = R6Class(
+HGlassoCandidate = R6::R6Class(
   private = list(
     .identifier = "hglasso",
     .selectTuningParams = function(data)
@@ -110,7 +110,7 @@ HGlassoCandidate = R6Class(
         {
           for(lambda3 in c(1,2,3))
           {
-            thisGraph = hglasso(S = cov(data), lambda1 = lambda1, lambda2 = lambda2, lambda3)
+            thisGraph = hglasso::hglasso(S = cov(data), lambda1 = lambda1, lambda2 = lambda2, lambda3)
             thisBIC = hglassoBIC(thisGraph, cov(data), c=0.2)$BIC
             if(thisBIC < bestBIC)
             {
@@ -141,14 +141,14 @@ HGlassoCandidate = R6Class(
     fit = function(data)
     {
       optParams = private$.selectTuningParams(data)
-      optHub = hglasso(S = cov(data), lambda1 = optParams[1], lambda2 = optParams[2], lambda3 = optParams[3])
+      optHub = hglasso::hglasso(S = cov(data), lambda1 = optParams[1], lambda2 = optParams[2], lambda3 = optParams[3])
       return(optHub$Theta)
       return(result)
     }
   ) # end public
 )
 
-MLECandidate = R6Class(
+MLECandidate = R6::R6Class(
 
   inherit = Candidate,
 
@@ -167,7 +167,7 @@ MLECandidate = R6Class(
   ) # end public
 )
 
-QGraphEBICCandidate = R6Class(
+QGraphEBICCandidate = R6::R6Class(
 
   inherit = Candidate,
 
