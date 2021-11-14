@@ -187,7 +187,7 @@ SpiderLearner = R6::R6Class(
       nMod = length(private$.library)
       if(!boundedLoss)
       {
-        alphaOpt = solnp(rep(1/nMod,nMod),
+        alphaOpt = Rsolnp::solnp(rep(1/nMod,nMod),
                          fun=private$.objectiveFunction,
                          eqfun=equal,
                          eqB=1,
@@ -199,7 +199,7 @@ SpiderLearner = R6::R6Class(
 
       if(boundedLoss)
       {
-        alphaOpt = solnp(rep(1/nMod,nMod),
+        alphaOpt = Rsolnp::solnp(rep(1/nMod,nMod),
                          fun=private$.boundedObjectiveFunction,
                          eqfun=equal,
                          eqB=1,
@@ -207,10 +207,6 @@ SpiderLearner = R6::R6Class(
                          data=data,
                          foldsDF=foldEstimates[[1]],
                          LB=rep(0,nMod),UB=rep(1,nMod))
-
-        print(alphaOpt$convergence)
-        print(alphaOpt$nfuneval)
-        print(alphaOpt$elapsed)
       }
 
       fullModels = list()
