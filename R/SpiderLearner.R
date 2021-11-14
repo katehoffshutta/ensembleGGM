@@ -62,7 +62,7 @@ SpiderLearner = R6::R6Class(
       folds = sample(folds)
       foldsDF = data.frame("sample"=paste("Sample",1:n),"fold"=folds)
 
-      registerDoParallel(private$.nCores)
+      doParallel::registerDoParallel(private$.nCores)
       foldsNets = list()
       foldsNets = foreach(k=1:K) %dopar%
         {
@@ -73,7 +73,7 @@ SpiderLearner = R6::R6Class(
 
         }
 
-      stopImplicitCluster()
+      doParallel::stopImplicitCluster()
 
       # return the data with fold assignments as well as the estimated networks
       return(list(foldsDF,foldsNets))
