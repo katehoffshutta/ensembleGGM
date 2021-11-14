@@ -111,7 +111,7 @@ HGlassoCandidate = R6::R6Class(
           for(lambda3 in c(1,2,3))
           {
             thisGraph = hglasso::hglasso(S = cov(data), lambda1 = lambda1, lambda2 = lambda2, lambda3)
-            thisBIC = hglassoBIC(thisGraph, cov(data), c=0.2)$BIC
+            thisBIC = hglasso::hglassoBIC(thisGraph, cov(data), c=0.2)$BIC
             if(thisBIC < bestBIC)
             {
               bestBIC = thisBIC
