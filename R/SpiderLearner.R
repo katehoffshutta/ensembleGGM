@@ -73,7 +73,7 @@ SpiderLearner = R6::R6Class(
 
         }
 
-      stopImplicitCluster()
+      doParallel::stopImplicitCluster()
 
       # return the data with fold assignments as well as the estimated networks
       return(list(foldsDF,foldsNets))
@@ -150,7 +150,7 @@ SpiderLearner = R6::R6Class(
       library(foreach)
       library(doParallel)
 
-      registerDoParallel(nBootCores)
+      doParallel::registerDoParallel(nBootCores)
       bootModels = foreach(b=1:nBoot) %dopar%
         {
           thisData = data[sample(nrow(data),replace=T),]
@@ -158,7 +158,7 @@ SpiderLearner = R6::R6Class(
           #bootArray[b,,] = thisEst$optTheta
           #bootWeights[b,] = thisEst$weights
         }
-      stopImplicitCluster()
+      doParallel::stopImplicitCluster()
 
       for(b in 1:nBoot)
       {
