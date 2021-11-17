@@ -17,7 +17,22 @@ MakeSpiderLearner = function(candidates = list(MLECandidate$new(),HugeEBICCandid
 
 PlotSpiderLearner = function(slResult)
 {
-  slGraph = graph_from_adjacency_matrix(-cov2cor(slResult$optTheta),
+  slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(slResult$optTheta),
+                                        diag=F,
+                                        weighted=T,
+                                        mode="undirected")
+  igraph::plot(slGraph,
+       edge.width = 5*abs(E(slGraph)$weight),
+       edge.color = ifelse(E(slGraph)$weight > 0, "red","blue"),
+       vertex.color = "white",
+       vertex.size = 20,
+       vertex.label.cex = 0.5,
+       layout = layout_in_circle)
+}
+
+PlotCandidates = function(slResult,index)
+{
+  slGraph = graph_from_adjacency_matrix(-cov2cor(slResult$fullModels[[index]]),
                                         diag=F,
                                         weighted=T,
                                         mode="undirected")
@@ -29,4 +44,3 @@ PlotSpiderLearner = function(slResult)
        vertex.label.cex = 0.5,
        layout = layout_in_circle)
 }
-
