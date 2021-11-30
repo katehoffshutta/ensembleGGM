@@ -190,7 +190,8 @@ QGraphEBICCandidate = R6::R6Class(
                                lambda.min.ratio=0.01,
                                gamma = private$.gamma,
                                returnAllResults=T, checkPD=FALSE)
-      return(mod$optwi)
+      # return(mod$optwi) This is occasionally null for some reason, so return the direct result instead
+      return(mod$results$wi[,,which.min(mod$ebic)])
     }
   ) # end public
 )
