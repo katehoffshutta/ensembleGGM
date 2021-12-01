@@ -21,13 +21,25 @@ PlotSpiderLearner = function(slResult)
                                         diag=F,
                                         weighted=T,
                                         mode="undirected")
-  igraph::plot(slGraph,
+  if(length(E(slGraph)) == 0)
+  {
+       igraph::plot(slGraph,
+       vertex.color = "white",
+       vertex.size = 20,
+       vertex.label.cex = 0.5,
+       layout = layout_in_circle)
+  }
+	
+  else
+  { 				
+       igraph::plot(slGraph,
        edge.width = 5*abs(E(slGraph)$weight),
        edge.color = ifelse(E(slGraph)$weight > 0, "red","blue"),
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
        layout = layout_in_circle)
+ }
 }
 
 PlotCandidates = function(slResult,index)
