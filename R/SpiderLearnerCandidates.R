@@ -48,7 +48,10 @@ HugeRICCandidate = R6::R6Class(
       mod = huge::huge(trainData,method = "glasso")
       modOpt = huge::huge.select(mod,
                            criterion = "ric")
-      return(modOpt$opt.icov)
+      # return(modOpt$opt.icov)
+      # there were some issues with a null return here, so hand coding a refit of the model with optimal lambda
+      modFin = huge::huge(trainData, method = "glasso",lambda = modOpt$opt.lambda)
+      return(modFin$icov[[1]]) # There is only one lambda, so there will only be one entry in modFin$icov
     }
   ) # end public
 )
