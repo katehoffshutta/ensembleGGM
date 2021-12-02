@@ -23,7 +23,7 @@ PlotSpiderLearner = function(slResult)
                                         mode="undirected")
   if(length(E(slGraph)) == 0)
   {
-       igraph::plot(slGraph,
+       plot(slGraph,
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
@@ -32,7 +32,7 @@ PlotSpiderLearner = function(slResult)
 	
   else
   { 				
-       igraph::plot(slGraph,
+       plot(slGraph,
        edge.width = 5*abs(E(slGraph)$weight),
        edge.color = ifelse(E(slGraph)$weight > 0, "red","blue"),
        vertex.color = "white",
@@ -44,13 +44,13 @@ PlotSpiderLearner = function(slResult)
 
 PlotCandidates = function(slResult,index)
 {
-  slGraph = graph_from_adjacency_matrix(-cov2cor(slResult$fullModels[[index]]),
+  slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(slResult$fullModels[[index]]),
                                         diag=F,
                                         weighted=T,
                                         mode="undirected")
    if(length(E(slGraph)) == 0)
   {
-       igraph::plot(slGraph,
+       plot(slGraph,
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
@@ -59,7 +59,7 @@ PlotCandidates = function(slResult,index)
 
   else
   {
-       igraph::plot(slGraph,
+       plot(slGraph,
        edge.width = 5*abs(E(slGraph)$weight),
        edge.color = ifelse(E(slGraph)$weight > 0, "red","blue"),
        vertex.color = "white",
