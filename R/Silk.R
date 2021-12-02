@@ -27,7 +27,7 @@ PlotSpiderLearner = function(slResult)
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
-       layout = layout_in_circle)
+       layout = igraph::layout_in_circle)
   }
 	
   else
@@ -38,7 +38,7 @@ PlotSpiderLearner = function(slResult)
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
-       layout = layout_in_circle)
+       layout = igraph::layout_in_circle)
  }
 }
 
@@ -54,7 +54,7 @@ PlotCandidates = function(slResult,index)
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
-       layout = layout_in_circle)
+       layout = igraph::layout_in_circle)
   }
 
   else
@@ -65,6 +65,6 @@ PlotCandidates = function(slResult,index)
        vertex.color = "white",
        vertex.size = 20,
        vertex.label.cex = 0.5,
-       layout = layout_in_circle)
+       layout = igraph::layout_in_circle)
  }
 }
