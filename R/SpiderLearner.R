@@ -68,7 +68,9 @@ SpiderLearner = R6::R6Class(
         {
           foreach(i=1:length(private$.library))%do%
             {
-              private$.library[[i]]$fit(data[foldsDF$fold !=k,])
+              tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
+	      print(paste("Dim of tmp",dim(tmp), "for method:",i, "for fold:",k))
+	      return(tmp)
             }
 
         }
@@ -179,7 +181,10 @@ SpiderLearner = R6::R6Class(
         data = apply(data,2,function(x){return((x-mean(x))/sd(x))})
       }
 
+      print("[Checkpoint] Before foldEstimates")
       foldEstimates = private$.estimateKNetworks(data,nCores)
+      print("[Checkpoint] After foldEstimates")
+
       foldsNets = foldEstimates[[2]]
 
       # find optimal coefficients
