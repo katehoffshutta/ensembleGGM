@@ -69,8 +69,8 @@ SpiderLearner = R6::R6Class(
           foreach(i=1:length(private$.library))%do%
             {
               tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
-	      print(paste("Dim of tmp",dim(tmp), "for method:",i, "for fold:",k))
-	      return(tmp)
+	      print(paste(c("Dim of tmp",dim(tmp), "for method:",i, "for fold:",k)))
+	      tmp
             }
 
         }
