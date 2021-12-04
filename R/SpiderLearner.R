@@ -68,7 +68,7 @@ SpiderLearner = R6::R6Class(
 	  print(paste("[SpiderLearner] Estimating in fold",k))
           foreach(i=1:length(private$.library))%do%
             {
-	      print(paste("[SpiderLearner] Fitting model"), private$.library[[i]].getIdentifier())
+	      print(paste("[SpiderLearner] Fitting model", private$.library[[i]].getIdentifier()))
               tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
 	      tmp
             }
