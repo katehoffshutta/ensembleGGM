@@ -12,8 +12,24 @@ MakeSpiderLearner(inputCandidates)
   \item{inputCandidates}{A list of Candidate objects.
 }
 }
-\details{
+\details{Currently supported Candidate objects are:
+
++ HugeEBICCandidate
+
++ HugeRICCandidate
+
++ HugeStARSCandidate
+
++ HGlassoCandidate
+
++ MLECandidate
+
++ QGraphEBICCandidate
+
+The default candidates for this function are MLECandidate and HugeEBICCandidate with gamma = 0.5. Additional Candidates can be instantiated and added to the SpiderLearner object using the syntax shown in the example.
+
 %%  ~~ If necessary, more details than the description above ~~
+
 }
 \value{
 A SpiderLearner object.
@@ -45,6 +61,20 @@ corrplot(judgeMod$optTheta, is.corr=F, main = "Judge Ratings Precision Matrix")
 
 # corrplot of adjacency matrix of GGM
 corrplot(-cov2cor(judgeMod$optTheta) + diag(12), main = "Judge Ratings GGM Adjacency Matrix")
+
+# Add more candidates
+
+ebic_gamma_0_candidate = HugeEBICCandidate$new(gamma = 0)
+qgraph_gamma_0_candidate = QGraphEBICCandidate$new(gamma = 0)
+
+mySL$addCandidate(ebic_gamma_0_candidate)
+mySL$addCandidate(qgraph_gamma_0_candidate)
+
+mySL$printLibrary()
+
+judgeMod2 = mySL$runSpiderLearner(data = USJudgeRatings,K=2,boundedLoss = T,standardize = T,nCores = 1)
+
+judgeMod2$weights
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
