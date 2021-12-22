@@ -93,7 +93,10 @@ HugeStARSCandidate = R6::R6Class(
                            stars.thres = private$.thres,
                            stars.subsample.ratio = private$.subsampleRatio,
 			   verbose=F)
-      return(modOpt$opt.icov)
+      #return(modOpt$opt.icov)
+      # there were some issues with a null return here, so hand coding a refit of the model with optimal lambda
+      modFin = huge::huge(trainData, method = "glasso",lambda = modOpt$opt.lambda,verbose=F)
+      return(modFin$icov[[1]]) # There is only one lambda, so there will only be one entry in modFin$icov
     }
   ) # end public
 )
@@ -195,7 +198,7 @@ QGraphEBICCandidate = R6::R6Class(
       mod = qgraph::EBICglasso(S=cov(trainData),n=nrow(trainData),
                                lambda.min.ratio=0.01,
                                gamma = private$.gamma,
-                               returnAllResults=T, checkPD=FALSE, 
+                               returnAllResults=T, checkPD=FALSE,
 			       verbose=F)
       # return(mod$optwi) This is occasionally null for some reason, so return the direct result instead
       return(mod$results$wi[,,which.min(mod$ebic)])

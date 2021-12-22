@@ -2,31 +2,31 @@
 \alias{MakeSpiderLearner}
 \title{Instantiate SpiderLearner Object}
 \description{
-This function instantiates a SpiderLearner object and populates it with a library of input Candidate objects. The result can then be used to fit ensemble GGMs on input data.
+This function instantiates a \code{SpiderLearner} object and populates it with a library of input \code{Candidate} objects. The result can then be used to fit ensemble GGMs on input data as shown in the example.
 }
 \usage{
 MakeSpiderLearner(inputCandidates)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{inputCandidates}{A list of Candidate objects.
+  \item{inputCandidates}{A list of \code{Candidate} objects.
 }
 }
-\details{Currently supported Candidate objects are:
+\details{Currently supported \code{Candidate} objects are:
 
-+ HugeEBICCandidate
+* \code{HugeEBICCandidate}
 
-+ HugeRICCandidate
+* \code{HugeRICCandidate}
 
-+ HugeStARSCandidate
+* \code{HugeStARSCandidate}
 
-+ HGlassoCandidate
+* \code{HGlassoCandidate}
 
-+ MLECandidate
+* \code{MLECandidate}
 
-+ QGraphEBICCandidate
+* \code{QGraphEBICCandidate}
 
-The default candidates for this function are MLECandidate and HugeEBICCandidate with gamma = 0.5. Additional Candidates can be instantiated and added to the SpiderLearner object using the syntax shown in the example.
+The default candidates for this function are \code{MLECandidate} and \code{HugeEBICCandidate} with \code{gamma = 0.5}. Additional \code{Candidate} objects can be instantiated and added to the \code{SpiderLearner} object using the syntax shown in the example.
 
 %%  ~~ If necessary, more details than the description above ~~
 
