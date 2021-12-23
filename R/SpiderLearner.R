@@ -37,8 +37,10 @@ Candidate = R6::R6Class(
 SpiderLearner = R6::R6Class(
   private = list(
     .library = list(), # list of Candidates
+    .identifiers = c(), # character vector of method names
     .K = 5,
     .nCores = 1,
+    .result = NULL, # when runSpiderLearner is called, fill this in with the result
     .calcLoss = function(alphas,nets,dataTest)
     {
       testMat = 0*diag(nrow(nets[[1]]))
@@ -51,7 +53,6 @@ SpiderLearner = R6::R6Class(
     },
     .estimateKNetworks = function(data,nCores=private$.nCores)
     {
-
       n=nrow(data)
       K=private$.K
 
@@ -65,14 +66,13 @@ SpiderLearner = R6::R6Class(
       foldsNets = list()
       foldsNets = foreach(k=1:K) %dopar%
         {
-	  print(paste("[SpiderLearner] Estimating in fold",k))
+          print(paste("[SpiderLearner] Estimating in fold",k))
           foreach(i=1:length(private$.library))%do%
             {
-	      print(paste("[SpiderLearner] Fitting model", private$.library[[i]]$getIdentifier()))
+              print(paste("[SpiderLearner] Fitting model", private$.library[[i]]$getIdentifier()))
               tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
-	      tmp
+              tmp
             }
-
         }
 
       doParallel::stopImplicitCluster()
@@ -103,7 +103,6 @@ SpiderLearner = R6::R6Class(
 
       return(mean(loglikResults[,1])) # mean cross-validated loss
     },
-
     .boundedObjectiveFunction = function(alphas,foldsNets,data,foldsDF)
     {
       expitLossResults = matrix(rep(NA,private$.K),ncol=1)
@@ -119,7 +118,6 @@ SpiderLearner = R6::R6Class(
       return(mean(expitLossResults[,1])) # mean cross-validated loss
     }
 
-
   ), # end private
 
   public = list(
@@ -127,18 +125,97 @@ SpiderLearner = R6::R6Class(
     initialize = function(){},
     addCandidate = function(candidate){
       private$.library[[length(private$.library)+1]] = candidate;
+      private$.identifiers = c(private$.identifiers, candidate$getIdentifier())
       invisible(self);
     },
     printLibrary = function()
     {
-      print(length(private$.library))
+      print(private$.identifiers)
+    },
+    getGGM = function() # return adjacency matrix of GGM
+    {
+      if(is.null(private$.result)) return(NULL)
+      return(-cov2cor(private$.result$optTheta) + diag(ncol(private$.result$optTheta)))
+    },
+    getPrecMat = function()
+    {
+      if(is.null(private$.result)) return(NULL)
+      return(private$.result$optTheta)
+    },
+    getResults = function()
+    {
+      return(private$.result)
+    },
+    getWeights = function()
+    {
+      if(is.null(private$.result)) return(NULL)
+      methods = c()
       for(i in 1:length(private$.library))
-        print(private$.library[[i]]$getIdentifier())
+        methods = c(methods,private$.library[[i]]$getIdentifier())
+      return(data.frame("method"=methods,"weight"=private$.result$weights))
+
+    },
+    plotCandidate = function(identifier,vertex.color="white",vertex.size=20,vertex.label.cex=0.5,layout=igraph::layout_in_circle)
+    {
+      if(is.null(private$.result)) return(NULL)
+      modelIndex = which(private$.identifiers == identifier)
+      slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(private$.result$fullModels[[modelIndex]]),
+                                                    diag=F,
+                                                    weighted=T,
+                                                    mode="undirected")
+      if(length(igraph::E(slGraph)) == 0)
+      {
+        plot(slGraph,
+             vertex.color = vertex.color,
+             vertex.size = vertex.size,
+             vertex.label.cex = vertex.label.cex,
+             layout = layout)
+      }
+
+      else
+      {
+        plot(slGraph,
+             edge.width = 5*abs(igraph::E(slGraph)$weight),
+             edge.color = ifelse(igraph::E(slGraph)$weight > 0, "red","blue"),
+             vertex.color = vertex.color,
+             vertex.size = vertex.size,
+             vertex.label.cex = vertex.label.cex,
+             layout = layout)
+      }
+      title(identifier)
+    },
+    plotSpiderLearner = function(vertex.color="white",vertex.size=20,vertex.label.cex=0.5,layout=igraph::layout_in_circle)
+    {
+      if(is.null(private$.result)) return(NULL)
+      slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(private$.result$optTheta),
+                                                    diag=F,
+                                                    weighted=T,
+                                                    mode="undirected")
+      if(length(igraph::E(slGraph)) == 0)
+      {
+        plot(slGraph,
+             vertex.color = vertex.color,
+             vertex.size = vertex.size,
+             vertex.label.cex = vertex.label.cex,
+             layout = layout)
+      }
+
+      else
+      {
+        plot(slGraph,
+             edge.width = 5*abs(igraph::E(slGraph)$weight),
+             edge.color = ifelse(igraph::E(slGraph)$weight > 0, "red","blue"),
+             vertex.color = vertex.color,
+             vertex.size = vertex.size,
+             vertex.label.cex = vertex.label.cex,
+             layout = layout)
+      }
+
+      title("SpiderLearner Ensemble")
     },
     removeCandidate = function(identifier)
     {
-      candidateNames = sapply(private$.library,function(x) x$getIdentifier());
-      delIndex = which(candidateNames == identifier)
+      delIndex = which(private$.identifiers == identifier)
       private$.library[[delIndex]] = NULL
       invisible(self)
     },
@@ -223,14 +300,14 @@ SpiderLearner = R6::R6Class(
 
       # calculate a simple mean model for benchmarking
       thetaSimpleMean = 1/nMod*Reduce('+', fullModels)
-
-      return(list("optTheta"=thetaEstOpt,
-                  "weights"=alphaOpt$pars,
-                  "simpleMeanNetwork"=thetaSimpleMean,
-                  "foldsNets"=foldsNets,
-                  "fullModels"=fullModels))
+      result = list("optTheta"=thetaEstOpt,
+                     "weights"=alphaOpt$pars,
+                     "simpleMeanNetwork"=thetaSimpleMean,
+                     "foldsNets"=foldsNets,
+                     "fullModels"=fullModels)
+      private$.result = result # store for later helper functions
+      return(result)
     }
-    # gets and sets
 
   ) # end public
 )
