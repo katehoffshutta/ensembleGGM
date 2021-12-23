@@ -29,9 +29,9 @@ PlotSpiderLearner = function(slResult)
        vertex.label.cex = 0.5,
        layout = igraph::layout_in_circle)
   }
-	
+
   else
-  { 				
+  {
        plot(slGraph,
        edge.width = 5*abs(igraph::E(slGraph)$weight),
        edge.color = ifelse(igraph::E(slGraph)$weight > 0, "red","blue"),
