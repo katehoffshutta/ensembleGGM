@@ -217,9 +217,9 @@ SpiderLearner = R6::R6Class(
     {
       if(identifier %in% private$.identifiers)
       {
-	delIndex = which(private$.identifiers == identifier)
+	      delIndex = which(private$.identifiers == identifier)
       	private$.library[[delIndex]] = NULL
-      	private$.identifiers[[delIndex]] = NULL
+      	private$.identifiers = private$.identifiers[-delIndex]
       }
 
       else
