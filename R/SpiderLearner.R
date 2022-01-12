@@ -215,7 +215,7 @@ SpiderLearner = R6::R6Class(
     },
     removeCandidate = function(identifier)
     {
-      if(identifier %in% private$.identifier)
+      if(identifier %in% private$.identifiers)
       {
 	delIndex = which(private$.identifiers == identifier)
       	private$.library[[delIndex]] = NULL
