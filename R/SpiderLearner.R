@@ -135,7 +135,7 @@ SpiderLearner = R6::R6Class(
     getGGM = function() # return adjacency matrix of GGM
     {
       if(is.null(private$.result)) return(NULL)
-      return(-cov2cor(private$.result$optTheta) + diag(ncol(private$.result$optTheta)))
+      return(1/2*(-cov2cor(private$.result$optTheta) + t(-cov2cor(private$.result$optTheta))) + diag(ncol(private$.result$optTheta)))
     },
     getPrecMat = function()
     {
@@ -162,7 +162,8 @@ SpiderLearner = R6::R6Class(
       slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(private$.result$fullModels[[modelIndex]]),
                                                     diag=F,
                                                     weighted=T,
-                                                    mode="undirected")
+                                                    mode="plus")
+      igraph::E(slGraph)$weight = 1/2*igraph::E(slGraph)$weight
       if(length(igraph::E(slGraph)) == 0)
       {
         plot(slGraph,
@@ -190,7 +191,8 @@ SpiderLearner = R6::R6Class(
       slGraph = igraph::graph_from_adjacency_matrix(-cov2cor(private$.result$optTheta),
                                                     diag=F,
                                                     weighted=T,
-                                                    mode="undirected")
+                                                    mode="plus")
+      igraph::E(slGraph)$weight = 1/2*igraph::E(slGraph)$weight
       if(length(igraph::E(slGraph)) == 0)
       {
         plot(slGraph,
