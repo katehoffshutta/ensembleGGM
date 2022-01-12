@@ -215,8 +215,18 @@ SpiderLearner = R6::R6Class(
     },
     removeCandidate = function(identifier)
     {
-      delIndex = which(private$.identifiers == identifier)
-      private$.library[[delIndex]] = NULL
+      if(identifier %in% private$.identifier)
+      {
+	delIndex = which(private$.identifiers == identifier)
+      	private$.library[[delIndex]] = NULL
+      	private$.identifiers[[delIndex]] = NULL
+      }
+
+      else
+      {
+        print(paste("[SpiderLearner::removeCandidate] No such candidate:", identifier))
+      }
+
       invisible(self)
     },
     runBootstrap = function(data,K=5,standardize=T,nBoot=1,nBootCores=1)
