@@ -224,9 +224,9 @@ CLIMECandidate = R6::R6Class(
 
     fit = function(trainData)
     {
-      climemat = clime(mysamp, standardize=F)
+      climemat = clime(trainData, standardize=F)
       re.cv= cv.clime(climemat)
-      re.clime.opt = clime(mysamp, standardize=F, lambda = re.cv$lambdaopt)
+      re.clime.opt = clime(trainData, standardize=F, lambda = re.cv$lambdaopt)
       return(re.clime.opt$Omegalist[[1]])
     }
   ) # end public
