@@ -1,4 +1,5 @@
 # Each candidate inherits from the Candidate class defined in spiderLearnerOOP.R
+library(clime)
 library(hglasso)
 library(huge)
 library(qgraph)
@@ -202,6 +203,31 @@ QGraphEBICCandidate = R6::R6Class(
 			       verbose=F)
       # return(mod$optwi) This is occasionally null for some reason, so return the direct result instead
       return(mod$results$wi[,,which.min(mod$ebic)])
+    }
+  ) # end public
+)
+
+CLIMECandidate = R6::R6Class(
+
+  inherit = Candidate,
+
+  private = list(
+    .identifier = ""
+  ), # end private
+
+  public = list(
+
+    initialize = function(gamma)
+    {
+      private$.identifier = "clime";
+    },
+
+    fit = function(trainData)
+    {
+      climemat = clime(mysamp, standardize=F)
+      re.cv= cv.clime(climemat)
+      re.clime.opt = clime(mysamp, standardize=F, lambda = re.cv$lambdaopt)
+      return(re.clime.opt$Omegalist[[1]])
     }
   ) # end public
 )
