@@ -260,7 +260,7 @@ SpiderLearner = R6::R6Class(
       return(list(bootArray, bootWeights))
 
     },
-    runSpiderLearner = function(data,K=5,standardize=T,nCores=1,boundedLoss=F)
+    runSpiderLearner = function(data,K=5,standardize=T,nCores=1,boundedLoss=F, ...)
     {
       private$.K = K
       private$.nCores = nCores
@@ -285,7 +285,8 @@ SpiderLearner = R6::R6Class(
                          foldsNets=foldsNets,
                          data=data,
                          foldsDF=foldEstimates[[1]],
-                         LB=rep(0,nMod),UB=rep(1,nMod))
+                         LB=rep(0,nMod),UB=rep(1,nMod),
+                         ...)
       }
 
       if(boundedLoss)
@@ -297,7 +298,8 @@ SpiderLearner = R6::R6Class(
                          foldsNets=foldsNets,
                          data=data,
                          foldsDF=foldEstimates[[1]],
-                         LB=rep(0,nMod),UB=rep(1,nMod))
+                         LB=rep(0,nMod),UB=rep(1,nMod),
+                         ...)
       }
 
       fullModels = list()

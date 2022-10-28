@@ -76,7 +76,11 @@ judgeMod2 = mySL$runSpiderLearner(data = USJudgeRatings,K=2,boundedLoss = T,stan
 
 judgeMod2$weights
 
+# Adjust control parameters for Rsolnp::solnp
+judgeMod2 = mySL$runSpiderLearner(data = USJudgeRatings,K=2,boundedLoss = T,standardize = T,nCores = 1,control=list(delta = 1e-9,tol = 1e-10))
+
 }
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
 % \keyword{ ~kwd1 }
