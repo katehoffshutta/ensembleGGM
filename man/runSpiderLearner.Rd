@@ -31,6 +31,7 @@ s$runSpiderLearner(data,K=5,standardize=T,nCores=1,boundedLoss=F, ...)
 \item{simpleMeanNetwork}{For comparision, a precision matrix estimated as the simple mean of the candidate estimates}
 \item{foldsNets}{Precision matrices estimated within each fold of the cross-validation.}
 \item{fullModels}{Precision matrices estimated with each candidate method on the full dataset, for comparision.}
+\item{foldsDF}{Data frame showing the assignment of each sample to its fold.}
 }
 \references{\url{https://doi.org/10.1101/2021.07.13.452248}
 }
