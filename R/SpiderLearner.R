@@ -40,7 +40,9 @@ SpiderLearner = R6::R6Class(
     .identifiers = c(), # character vector of method names
     .K = 5,
     .nCores = 1,
-    .result = NULL, # when runSpiderLearner is called, fill this in with the result
+    .result = NULL, # when  is called, fill this in with the result
+    .seedFlag = F, # set a seed for the fold randomization?
+    .foldseed = NULL, # if seedFlag == T, this seed is used for fold randomization
     .calcLoss = function(alphas,nets,dataTest)
     {
       testMat = 0*diag(nrow(nets[[1]]))
@@ -51,7 +53,7 @@ SpiderLearner = R6::R6Class(
 
       return(-1*private$.loglikLossfunction(testMat,dataTest))
     },
-    .estimateKNetworks = function(data,nCores=private$.nCores)
+    .estimateKNetworks = function(data,nCores=private$.nCores, seedFlag = private$.seedFlag, seed = private$.foldseed)
     {
       n=nrow(data)
       K=private$.K
@@ -59,6 +61,12 @@ SpiderLearner = R6::R6Class(
       # split the data into K folds and fit the model in each one
       folds = c(rep(1:K,floor(n/K)))
       if(n %% K != 0) folds = c(folds,c(1:(n-K*floor(n/K))))
+
+      if(private$.seedFlag == T)
+      {
+        set.seed(private$.foldseed)
+      }
+
       folds = sample(folds)
       foldsDF = data.frame("sample"=paste("Sample",1:n),"fold"=folds)
 
@@ -260,17 +268,24 @@ SpiderLearner = R6::R6Class(
       return(list(bootArray, bootWeights))
 
     },
-    runSpiderLearner = function(data,K=5,standardize=T,nCores=1,boundedLoss=F, ...)
+    runSpiderLearner = function(data,K=5,standardize=T,nCores=1,boundedLoss=F,seedFlag=F,foldseed=NULL, ...)
     {
       private$.K = K
       private$.nCores = nCores
+      private$.seedFlag = seedFlag
+      if(private$.seedFlag)
+      {
+        private$.foldseed = foldseed
+        print(paste("[SpiderLearner] Assigned fold seed:",private$.foldseed))
+
+      }
 
       if(standardize)
       {
         data = apply(data,2,function(x){return((x-mean(x))/sd(x))})
       }
 
-      foldEstimates = private$.estimateKNetworks(data,nCores)
+      foldEstimates = private$.estimateKNetworks(data,nCores,private$.seedFlag,private$.foldseed)
       foldsNets = foldEstimates[[2]]
 
       # find optimal coefficients
@@ -318,7 +333,8 @@ SpiderLearner = R6::R6Class(
                      "weights"=alphaOpt$pars,
                      "simpleMeanNetwork"=thetaSimpleMean,
                      "foldsNets"=foldsNets,
-                     "fullModels"=fullModels)
+                     "fullModels"=fullModels,
+                     "foldsDF"=foldEstimates[[1]])
       private$.result = result # store for later helper functions
       return(result)
     }
