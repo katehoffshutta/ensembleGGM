@@ -3,14 +3,14 @@ Type: Package
 Title: Ensemble Estimation of Gaussian Graphical Models with SpiderLearner
 Version: 0.1.0
 Author: Kate Hoff Shutta
-Maintainer: Kate Hoff Shutta <kshutta@umass.edu>
+Maintainer: Kate Hoff Shutta <kshutta@hsph.harvard.edu>
 Description: Estimates Gaussian graphical models (GGMs) using an ensemble framework.
     Several different candidate GGM methods are called from the package.
     Users may also write their own methods for inclusion into the ensemble.
 License: MIT
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
     corrplot,
     doParallel,
     foreach,
@@ -20,4 +20,6 @@ Imports:
     qgraph,
     R6,
     Rsolnp
+Depends:
+    clime
 RoxygenNote: 7.2.1
