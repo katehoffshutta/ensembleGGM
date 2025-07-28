@@ -39,6 +39,7 @@ SpiderLearner = R6::R6Class(
     .library = list(), # list of Candidates
     .identifiers = c(), # character vector of method names
     .K = 5,
+    .parallel = F,
     .nCores = 1,
     .result = NULL, # when  is called, fill this in with the result
     .seedFlag = F, # set a seed for the fold randomization?
@@ -70,20 +71,38 @@ SpiderLearner = R6::R6Class(
       folds = sample(folds)
       foldsDF = data.frame("sample"=paste("Sample",1:n),"fold"=folds)
 
-      doParallel::registerDoParallel(private$.nCores)
-      foldsNets = list()
-      foldsNets = foreach(k=1:K) %dopar%
+      if(private$.parallel == T)
+      {
+        doParallel::registerDoParallel(private$.nCores)
+        foldsNets = list()
+        foldsNets = foreach(k=1:K) %dopar%
+          {
+            print(paste("[SpiderLearner] Estimating in fold",k))
+            foreach(i=1:length(private$.library))%do%
+              {
+                print(paste("[SpiderLearner] Fitting model", private$.library[[i]]$getIdentifier()))
+                tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
+                tmp
+              }
+          }
+
+        doParallel::stopImplicitCluster()
+      }
+
+      if(private$.parallel == F)
+      {
+        foldsNets = list()
+        for(k in c(1:K))
         {
+          foldsNets[[k]] = list()
           print(paste("[SpiderLearner] Estimating in fold",k))
-          foreach(i=1:length(private$.library))%do%
+          for(i in c(1:length(private$.library)))
             {
               print(paste("[SpiderLearner] Fitting model", private$.library[[i]]$getIdentifier()))
-              tmp <- private$.library[[i]]$fit(data[foldsDF$fold !=k,])
-              tmp
+              foldsNets[[k]][[i]] = private$.library[[i]]$fit(data[foldsDF$fold !=k,])
             }
         }
-
-      doParallel::stopImplicitCluster()
+      }
 
       # return the data with fold assignments as well as the estimated networks
       return(list(foldsDF,foldsNets))
@@ -130,7 +149,8 @@ SpiderLearner = R6::R6Class(
 
   public = list(
 
-    initialize = function(){},
+    initialize = function(parallel = F)
+      {private$.parallel = parallel},
     addCandidate = function(candidate){
       private$.library[[length(private$.library)+1]] = candidate;
       private$.identifiers = c(private$.identifiers, candidate$getIdentifier())
